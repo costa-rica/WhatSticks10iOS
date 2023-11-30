@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+class User:Codable {
+    var id: String?
+    var email: String?
+    var password: String?
+    var username: String?
+    var token: String?
+    var admin: Bool?
+    var time_stamp_utc: String?
+}
+
