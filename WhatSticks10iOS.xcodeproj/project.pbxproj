@@ -12,6 +12,7 @@
 		018B76242B18524200EE711D /* MiscUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B76232B18524200EE711D /* MiscUtils.swift */; };
 		018B76262B1877B000EE711D /* HealthDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B76252B1877B000EE711D /* HealthDataStore.swift */; };
 		018B76282B1915FA00EE711D /* ForgotPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B76272B1915F900EE711D /* ForgotPasswordVC.swift */; };
+		018B762A2B1B635000EE711D /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 018B76292B1B635000EE711D /* Config.plist */; };
 		01EB5CB52B17257F00CE9F2D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EB5CB42B17257F00CE9F2D /* AppDelegate.swift */; };
 		01EB5CB72B17257F00CE9F2D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EB5CB62B17257F00CE9F2D /* SceneDelegate.swift */; };
 		01EB5CB92B17257F00CE9F2D /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EB5CB82B17257F00CE9F2D /* LoginVC.swift */; };
@@ -51,6 +52,7 @@
 		018B76232B18524200EE711D /* MiscUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscUtils.swift; sourceTree = "<group>"; };
 		018B76252B1877B000EE711D /* HealthDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataStore.swift; sourceTree = "<group>"; };
 		018B76272B1915F900EE711D /* ForgotPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordVC.swift; sourceTree = "<group>"; };
+		018B76292B1B635000EE711D /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Config.plist; sourceTree = "<group>"; };
 		01EB5CB12B17257F00CE9F2D /* WhatSticks10iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhatSticks10iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01EB5CB42B17257F00CE9F2D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01EB5CB62B17257F00CE9F2D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				01EB5CBD2B17258100CE9F2D /* Assets.xcassets */,
 				01EB5CBF2B17258100CE9F2D /* LaunchScreen.storyboard */,
 				01EB5CC22B17258100CE9F2D /* Info.plist */,
+				018B76292B1B635000EE711D /* Config.plist */,
 			);
 			path = WhatSticks10iOS;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				018B762A2B1B635000EE711D /* Config.plist in Resources */,
 				01EB5CC12B17258100CE9F2D /* LaunchScreen.storyboard in Resources */,
 				01EB5CBE2B17258100CE9F2D /* Assets.xcassets in Resources */,
 				01EB5CBC2B17257F00CE9F2D /* Main.storyboard in Resources */,

@@ -53,6 +53,7 @@ class UserStore {
     }
     
     func registerNewUser(email:String,password:String,completion:@escaping([String:Any])->Void){
+        print("- registerNewUser accessed")
         let url = urlStore.callEndpoint(endPoint: .register)
         
         var jsonData = Data()
@@ -64,6 +65,7 @@ class UserStore {
         
         bodyDict["new_email"] = email
         bodyDict["new_password"] = password
+        bodyDict["WS_API_PASSWORD"] = "sudo_"
         do {
             let jsonEncoder = JSONEncoder()
             jsonData = try jsonEncoder.encode(bodyDict)
@@ -85,8 +87,8 @@ class UserStore {
                     OperationQueue.main.addOperation {
                         completion(jsonResult as! [String : Any])
                     }
-//                print(jsonResult)
-                print("* UserStore.registerNewUser: success!")
+                print(jsonResult)
+                print("UserStore.registerNewUser: success!")
             }catch {
                 print("---- UserStore.registerNewUser: Failed to read response")
             }

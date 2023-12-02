@@ -30,6 +30,7 @@ class DashboardVC: UIViewController{
     // End Screen Template
     
     var btnToGetStepsFromAppleHealth = UIButton()
+    var btnToGetStepsLast30Days = UIButton()
     // Array of dictionaries to store aggregated steps data
     var stepsDataByDate = [[String: Int]]()
     let healthDataFetcher = HealthDataFetcher()
@@ -49,9 +50,11 @@ class DashboardVC: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.hidesBackButton = true
         setup_vwLogin()
         setup_btnToGetStepsFromAppleHealth()
-        self.navigationItem.hidesBackButton = true
+        setup_btnToGetStepsLast30Days()
+        
 
 
     }
@@ -121,6 +124,8 @@ class DashboardVC: UIViewController{
         btnToGetStepsFromAppleHealth.titleLabel?.font = UIFont(name: "ArialRoundedMTBold", size: 12)
         btnToGetStepsFromAppleHealth.backgroundColor = .systemBlue
         btnToGetStepsFromAppleHealth.layer.cornerRadius = 10
+        btnToGetStepsFromAppleHealth.layer.borderColor = UIColor.systemBlue.cgColor
+        btnToGetStepsFromAppleHealth.layer.borderWidth = 3
         btnToGetStepsFromAppleHealth.translatesAutoresizingMaskIntoConstraints=false
         vwFooter.addSubview(btnToGetStepsFromAppleHealth)
         btnToGetStepsFromAppleHealth.sizeToFit()
@@ -129,7 +134,7 @@ class DashboardVC: UIViewController{
 //        btnToGetStepsFromAppleHealth.leadingAnchor.constraint(equalTo: vwFooter.leadingAnchor,constant: widthFromPct(percent: 10)).isActive=true
         btnToGetStepsFromAppleHealth.trailingAnchor.constraint(equalTo: vwFooter.trailingAnchor,constant: widthFromPct(percent: -5)).isActive=true
         btnToGetStepsFromAppleHealth.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
-        btnToGetStepsFromAppleHealth.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
+        btnToGetStepsFromAppleHealth.addTarget(self, action: #selector(touchUpInside_fetchSteps(_:)), for: .touchUpInside)
 
     }
     
@@ -140,49 +145,70 @@ class DashboardVC: UIViewController{
 
     }
 
-    @objc func touchUpInside(_ sender: UIButton) {
+    @objc func touchUpInside_fetchSteps(_ sender: UIButton) {
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
             sender.transform = .identity
         }, completion: nil)
-//        print("Get apple health")
-//        healthDataFetcher.fetchHealthData(startDateString: "2023-11-28", endDateString: "2023-11-30", quantityTypeIdentifier: .stepCount) { stepsDict in
-//            self.appleHealthDataDict = stepsDict
-//            print("Finished gettign steps")
-//        }
-//        healthDataFetcher.fetchHealthData(for: [.stepCount]) { healthDict in
-//            self.appleHealthDataDict = healthDict
-//        }
-//        healthDataFetcher.fetchTodaySteps()
+
         healthDataFetcher.fetchSteps(quantityTypeIdentifier: .stepCount) { stepsDict in
             self.appleHealthDataDict = stepsDict
         }
     }
     
-    func fetchStepsCount() {
-        if let stepCountType = HKObjectType.quantityType(forIdentifier: .stepCount) {
-            let query = HKSampleQuery(sampleType: stepCountType, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { [weak self] (query, results, error) in
-                guard let samples = results as? [HKQuantitySample] else { return }
+    
+    func setup_btnToGetStepsLast30Days(){
+        btnToGetStepsLast30Days.setTitle("Get 30 Days", for: .normal)
+        btnToGetStepsLast30Days.titleLabel?.font = UIFont(name: "ArialRoundedMTBold", size: 12)
+        btnToGetStepsLast30Days.backgroundColor = .systemOrange
+        btnToGetStepsLast30Days.layer.cornerRadius = 10
+        btnToGetStepsLast30Days.translatesAutoresizingMaskIntoConstraints=false
+        vwFooter.addSubview(btnToGetStepsLast30Days)
+        btnToGetStepsLast30Days.sizeToFit()
 
-                var tempStepsData = [String: Int]() // Temporary dictionary for aggregation
+        btnToGetStepsLast30Days.topAnchor.constraint(equalTo: vwFooter.bottomAnchor,constant: heightFromPct(percent: -10)).isActive=true
 
-                // Aggregate steps by date
-                for sample in samples {
-                    let steps = Int(sample.quantity.doubleValue(for: HKUnit.count()))
-                    let date = self?.formattedDate(sample.endDate)
-                    if let dateStr = date {
-                        tempStepsData[dateStr, default: 0] += steps
-                    }
-                }
+        btnToGetStepsLast30Days.trailingAnchor.constraint(equalTo: btnToGetStepsFromAppleHealth.leadingAnchor,constant: widthFromPct(percent: 5)).isActive=true
+        btnToGetStepsLast30Days.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
+        btnToGetStepsLast30Days.addTarget(self, action: #selector(touchUpInside_fetchSteps30Days(_:)), for: .touchUpInside)
 
-                // Convert the dictionary into the required array of dictionaries
-                self?.stepsDataByDate = tempStepsData.map { [$0.key: $0.value] }
-                
-                // After aggregation, you can proceed to send the data to API or handle it as required
-                print(self?.stepsDataByDate ?? "No steps data")
-            }
-            healthStore.execute(query)
+    }
+    
+    @objc func touchUpInside_fetchSteps30Days(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+            sender.transform = .identity
+        }, completion: nil)
+
+        healthDataFetcher.fetchSteps(quantityTypeIdentifier: .stepCount, startDateString: "2023-12-02") { stepsDict in
+            self.appleHealthDataDict = stepsDict
         }
     }
+    
+    
+//    func fetchStepsCount() {
+//        if let stepCountType = HKObjectType.quantityType(forIdentifier: .stepCount) {
+//            let query = HKSampleQuery(sampleType: stepCountType, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { [weak self] (query, results, error) in
+//                guard let samples = results as? [HKQuantitySample] else { return }
+//
+//                var tempStepsData = [String: Int]() // Temporary dictionary for aggregation
+//
+//                // Aggregate steps by date
+//                for sample in samples {
+//                    let steps = Int(sample.quantity.doubleValue(for: HKUnit.count()))
+//                    let date = self?.formattedDate(sample.endDate)
+//                    if let dateStr = date {
+//                        tempStepsData[dateStr, default: 0] += steps
+//                    }
+//                }
+//
+//                // Convert the dictionary into the required array of dictionaries
+//                self?.stepsDataByDate = tempStepsData.map { [$0.key: $0.value] }
+//                
+//                // After aggregation, you can proceed to send the data to API or handle it as required
+//                print(self?.stepsDataByDate ?? "No steps data")
+//            }
+//            healthStore.execute(query)
+//        }
+//    }
     
     private func formattedDate(_ date: Date) -> String {
         let dateFormatter = DateFormatter()

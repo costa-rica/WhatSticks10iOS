@@ -20,7 +20,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="MaV-ZU-tma"/>
                     <connections>
-                        <segue destination="xdm-SP-VNB" kind="show" identifier="segueToRegisterVC" id="Ic4-R6-eue"/>
+                        <segue destination="xdm-SP-VNB" kind="show" identifier="goToRegisterVC" id="Ic4-R6-eue"/>
                         <segue destination="mf1-vS-8Qj" kind="show" identifier="goToDashboardVC" id="5pI-Ov-J0g"/>
                         <segue destination="AOE-1O-9dp" kind="show" identifier="goToForgotPasswordVC" id="NTt-sd-Nn3"/>
                     </connections>

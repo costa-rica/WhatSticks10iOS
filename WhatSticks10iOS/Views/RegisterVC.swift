@@ -45,7 +45,13 @@ class RegisterVC: UIViewController {
     var btnRegister=UIButton()
     var lblWarning: UILabel!
     
-    var registerSuccessMessage = "Succesfully Registered!"
+    var registerSuccessMessage = ""{
+        didSet{
+            if registerSuccessMessage == "Succesfully Registered!"{
+                
+            }
+        }
+    }
 
     
     override func viewDidLoad() {
@@ -54,8 +60,9 @@ class RegisterVC: UIViewController {
 //
         setup_vwLogin()
         setup_lblTitle()
-        setup_stckVwLogin()
+        setup_stckVwRegister()
         setup_btnRegister()
+        
     }
     
     func setup_vwLogin(){
@@ -100,7 +107,7 @@ class RegisterVC: UIViewController {
         lblScreenNameTitle.leadingAnchor.constraint(equalTo: vwHeaderLogo.leadingAnchor, constant: widthFromPct(percent: 2.5)).isActive=true
     }
     
-    func setup_stckVwLogin(){
+    func setup_stckVwRegister(){
         lblEmail.text = "Email"
         lblPassword.text = "Password"
         
@@ -170,9 +177,10 @@ class RegisterVC: UIViewController {
     
     func setup_btnRegister(){
         btnRegister.setTitle("Register", for: .normal)
-        btnRegister.layer.borderColor = UIColor(named: "orangePrimary")?.cgColor
-        btnRegister.layer.borderWidth = 2
-        btnRegister.setTitleColor(.black, for: .normal)
+//        btnRegister.layer.borderColor = UIColor(named: "orangePrimary")?.cgColor
+//        btnRegister.layer.borderWidth = 2
+//        btnRegister.setTitleColor(.black, for: .normal)
+        btnRegister.backgroundColor = .systemBlue
         btnRegister.layer.cornerRadius = 10
         btnRegister.translatesAutoresizingMaskIntoConstraints = false
         stckVwLogin.addArrangedSubview(btnRegister)
@@ -195,7 +203,8 @@ class RegisterVC: UIViewController {
     
     func requestRegister(){
         print("- RegisterVC: requestRegister()")
-        
+        print("email: \(txtEmail.text ?? "no email")")
+        print("password: \(txtPassword.text ?? "no password")")
         userStore.registerNewUser(email: txtEmail.text!, password: txtPassword.text!) { userRegDict in
             if let _ = userRegDict["existing_emails"] as? [String]{
                 print("--- email already exists ---")
@@ -210,7 +219,7 @@ class RegisterVC: UIViewController {
                 print("- RegisterVC: successfully added user")
                 print("\(userRegDict["username"]!)")
                 self.registerSuccessMessage = "Succesfully Registered!"
-                self.alertConfirmRegister()
+                
 
 
             }

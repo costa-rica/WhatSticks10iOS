@@ -38,17 +38,18 @@ class LoginVC: UIViewController {
     
     // Btn Login
     let btnLogin = UIButton()
-    
+    var alertFailedLoginMessage = ""
     
     var stckVwRememberMe: UIStackView!
     let swRememberMe = UISwitch()
-    var lblLoginStatusMessage = UILabel() {
-        didSet{
-            if lblLoginStatusMessage.text != ""{
-                setup_vwFailedToLogin()
-            }
-        }
-    }
+//    var lblLoginStatusMessage = UILabel() {
+//        didSet{
+//            if lblLoginStatusMessage.text != ""{
+//                setup_vwFailedToLogin()
+//            }
+//        }
+//    }
+    
     
     var token = "token" {
         didSet{
@@ -252,13 +253,13 @@ class LoginVC: UIViewController {
         btnLogin.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
         
     }
+    
     @objc func touchDownLogin(_ sender: UIButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         }, completion: nil)
         //        goToAdminFlag = false
     }
-
     
     @objc func touchUpInside(_ sender: UIButton) {
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
@@ -284,7 +285,7 @@ class LoginVC: UIViewController {
                     self.userStore.user.password = self.txtPassword.text
                     //                    self.userStore.user.user_rincons = user_obj.user_rincons
                     self.userStore.user.username = user_obj.username
-                    self.lblLoginStatusMessage.text = ""
+//                    self.lblLoginStatusMessage.text = ""
                     self.token = user_obj.token!
                     self.requestStore.token = user_obj.token!
 //                    print("self.token: \(self.token)")
@@ -293,31 +294,35 @@ class LoginVC: UIViewController {
                 case let .failure(error):
                     print("Login error: \(error)")
                     OperationQueue.main.addOperation {
-                        self.lblLoginStatusMessage = UILabel()
-                        let tempLabel = UILabel()
+//                        self.lblLoginStatusMessage = UILabel()
+                        
                         if error as! UserStoreError == UserStoreError.failedToRecieveServerResponse{
-                            tempLabel.text = "Server down ... probably :/"
+                            self.alertFailedLoginMessage = "Server down ... probably :/"
                         } else {
-                            tempLabel.text = "Failed To Login"
+                            self.alertFailedLoginMessage = "Failed to login. \n Are you registered?"
                         }
-                        self.lblLoginStatusMessage = tempLabel
+
+                        self.alertFailedLogin()
                     }
                 }
             }
         } else {
-            print("No email and password provided! ")
+            print("No email or password provided")
+            self.alertFailedLoginMessage = "No email or password provided"
+            self.alertFailedLogin()
+            
 //            setup_vwFailedToLogin()
-            OperationQueue.main.addOperation {
-                self.lblLoginStatusMessage = UILabel()
-                let tempLabel = UILabel()
-                tempLabel.text = "No email and password provided!"
-//                if error as! UserStoreError == UserStoreError.failedToRecieveServerResponse{
-//                    tempLabel.text = "Server down ... probably :/"
-//                } else {
-//                    tempLabel.text = "Failed To Login"
-//                }
-                self.lblLoginStatusMessage = tempLabel
-            }
+//            OperationQueue.main.addOperation {
+//                self.lblLoginStatusMessage = UILabel()
+//                let tempLabel = UILabel()
+//                tempLabel.text = "No email and password provided!"
+////                if error as! UserStoreError == UserStoreError.failedToRecieveServerResponse{
+////                    tempLabel.text = "Server down ... probably :/"
+////                } else {
+////                    tempLabel.text = "Failed To Login"
+////                }
+//                self.lblLoginStatusMessage = tempLabel
+//            }
         }
         
     }
@@ -343,29 +348,29 @@ class LoginVC: UIViewController {
         swRememberMe.isOn = true
     }
     
-    func setup_vwFailedToLogin(){
-        let vwFailedToLogin = UIView()
-        //        vwFailedToLogin.backgroundColor = UIColor(red: 0.8, green: 0.2, blue: 0.4, alpha: 1.0)
-        vwFailedToLogin.backgroundColor = UIColor(named: "gray-500")
-        vwFailedToLogin.translatesAutoresizingMaskIntoConstraints=false
-        view.addSubview(vwFailedToLogin)
-        lblLoginStatusMessage.translatesAutoresizingMaskIntoConstraints=false
-        vwFailedToLogin.addSubview(lblLoginStatusMessage)
-        
-        vwFailedToLogin.topAnchor.constraint(equalTo: vwHeaderSpace.bottomAnchor, constant: heightFromPct(percent: 1)).isActive=true
-        vwFailedToLogin.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: widthFromPct(percent: 5)).isActive=true
-        vwFailedToLogin.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
-        
-        vwFailedToLogin.layer.cornerRadius = 10
-        
-        view.layoutIfNeeded()
-        vwFailedToLogin.heightAnchor.constraint(equalToConstant: lblLoginStatusMessage.frame.size.height).isActive=true
-        
-        
-        lblLoginStatusMessage.topAnchor.constraint(equalTo: vwFailedToLogin.topAnchor).isActive=true
-        lblLoginStatusMessage.leadingAnchor.constraint(equalTo: vwFailedToLogin.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
-
-    }
+//    func setup_vwFailedToLogin(){
+//        let vwFailedToLogin = UIView()
+//        //        vwFailedToLogin.backgroundColor = UIColor(red: 0.8, green: 0.2, blue: 0.4, alpha: 1.0)
+//        vwFailedToLogin.backgroundColor = UIColor(named: "gray-500")
+//        vwFailedToLogin.translatesAutoresizingMaskIntoConstraints=false
+//        view.addSubview(vwFailedToLogin)
+//        lblLoginStatusMessage.translatesAutoresizingMaskIntoConstraints=false
+//        vwFailedToLogin.addSubview(lblLoginStatusMessage)
+//        
+//        vwFailedToLogin.topAnchor.constraint(equalTo: vwHeaderSpace.bottomAnchor, constant: heightFromPct(percent: 1)).isActive=true
+//        vwFailedToLogin.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: widthFromPct(percent: 5)).isActive=true
+//        vwFailedToLogin.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
+//        
+//        vwFailedToLogin.layer.cornerRadius = 10
+//        
+//        view.layoutIfNeeded()
+//        vwFailedToLogin.heightAnchor.constraint(equalToConstant: lblLoginStatusMessage.frame.size.height).isActive=true
+//        
+//        
+//        lblLoginStatusMessage.topAnchor.constraint(equalTo: vwFailedToLogin.topAnchor).isActive=true
+//        lblLoginStatusMessage.leadingAnchor.constraint(equalTo: vwFailedToLogin.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
+//
+//    }
     
     private func setupForgotPasswordButton() {
         btnForgotPassword = UIButton(type: .system)
@@ -409,7 +414,25 @@ class LoginVC: UIViewController {
         signUpLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
     }
     
-
+    func alertFailedLogin() {
+        // Create an alert
+        let alert = UIAlertController(title: nil, message: alertFailedLoginMessage, preferredStyle: .alert)
+        
+        // Create an OK button
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            // Dismiss the alert when the OK button is tapped
+            alert.dismiss(animated: true, completion: nil)
+            // Go back to HomeVC
+//            self.navigationController?.popViewController(animated: true)
+        }
+        
+        // Add the OK button to the alert
+        alert.addAction(okAction)
+        
+        // Present the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     
     
     @objc func viewTapped() {
@@ -418,7 +441,7 @@ class LoginVC: UIViewController {
     }
     
     @objc func signUpTapped() {
-        performSegue(withIdentifier: "segueToRegisterVC", sender: self)
+        performSegue(withIdentifier: "goToRegisterVC", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -426,6 +449,7 @@ class LoginVC: UIViewController {
             let RegisterVC = segue.destination as! RegisterVC
             RegisterVC.userStore = self.userStore
             RegisterVC.urlStore = self.urlStore
+            print("prepare(for goToRegisterVC --> accessed! ")
         }
         else if (segue.identifier == "goToDashboardVC"){
             let DashboardVC = segue.destination as! DashboardVC
