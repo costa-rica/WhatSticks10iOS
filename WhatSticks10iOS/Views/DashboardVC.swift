@@ -40,6 +40,7 @@ class DashboardVC: UIViewController{
                     print(responseDict)
                 }
             }
+            
         }
     }
     
@@ -143,10 +144,17 @@ class DashboardVC: UIViewController{
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
             sender.transform = .identity
         }, completion: nil)
-        print("Get apple health")
-        healthDataFetcher.fetchHealthData(startDateString: "2023-11-28", endDateString: "2023-11-30", quantityTypeIdentifier: .stepCount) { stepsDict in
+//        print("Get apple health")
+//        healthDataFetcher.fetchHealthData(startDateString: "2023-11-28", endDateString: "2023-11-30", quantityTypeIdentifier: .stepCount) { stepsDict in
+//            self.appleHealthDataDict = stepsDict
+//            print("Finished gettign steps")
+//        }
+//        healthDataFetcher.fetchHealthData(for: [.stepCount]) { healthDict in
+//            self.appleHealthDataDict = healthDict
+//        }
+//        healthDataFetcher.fetchTodaySteps()
+        healthDataFetcher.fetchSteps(quantityTypeIdentifier: .stepCount) { stepsDict in
             self.appleHealthDataDict = stepsDict
-            print("Finished gettign steps")
         }
     }
     

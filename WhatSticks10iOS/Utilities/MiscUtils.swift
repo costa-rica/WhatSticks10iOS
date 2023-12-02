@@ -8,10 +8,19 @@
 import Foundation
 import HealthKit
 
+extension Date {
+    static var startOfDay: Date {
+        Calendar.current.startOfDay(for:Date())
+    }
+}
+
+
 func authorizeHealthKit(healthStore: HKHealthStore) {
     // Specify the data types you want to read
     let healthKitTypesToRead: Set<HKObjectType> = [
-        HKObjectType.quantityType(forIdentifier: .stepCount)!
+        HKObjectType.quantityType(forIdentifier: .stepCount)!,
+        HKObjectType.quantityType(forIdentifier: .bodyMass)!,
+        HKObjectType.quantityType(forIdentifier: .heartRate)!
     ]
 
     // Request authorization
@@ -34,7 +43,117 @@ class HealthDataFetcher {
     let healthStore = HKHealthStore()
 
     
+    // Tutorial: https://www.youtube.com/watch?v=7vOF1kGnsmo
+    func fetchTodaySteps(){
+        let steps = HKQuantityType(.stepCount)
+        let predicate = HKQuery.predicateForSamples(withStart: .startOfDay, end: Date())
+        let query = HKStatisticsQuery(quantityType: steps, quantitySamplePredicate: predicate) { _, result, error in
+            guard
+                let result = result,
+                let quantity = result.sumQuantity(),
+                error == nil else {
+                print("error fetching fetchTodaySteps data ")
+                return
+            }
+            
+            let stepCount = quantity.doubleValue(for: .count())
+            print(stepCount)
+        }
+        
+        
+        
+        healthStore.execute(query)
+        
+   
+    }
+        
     
+    func fetchSteps(quantityTypeIdentifier: HKQuantityTypeIdentifier, completion: @escaping ([[String: String]]) -> Void) {
+        var stepsEntries = [[String: String]]()
+        guard let quantityType = HKQuantityType.quantityType(forIdentifier: quantityTypeIdentifier) else {
+            print("Invalid date or quantity type")
+            completion([])
+            return
+        }
+        let query = HKSampleQuery(sampleType: quantityType, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
+            guard error == nil else {print("error making query"); return}
+
+            samples?.forEach { sample in
+                if let sample = sample as? HKQuantitySample {
+                    var entry: [String: String] = [:]
+                    
+                    entry["sampleType"] = sample.sampleType.identifier
+                    entry["startDate"] = self.formatDateToString(sample.startDate)
+                    entry["endDate"] = self.formatDateToString(sample.endDate)
+                    entry["metadata"] = sample.metadata?.description ?? "No Metadata"
+                    entry["sourceName"] = sample.sourceRevision.source.name
+                    entry["sourceVersion"] = sample.sourceRevision.version
+                    entry["sourceProductType"] = sample.sourceRevision.productType ?? "Unknown"
+                    entry["device"] = sample.device?.name ?? "Unknown Device"
+                    entry["UUID"] = sample.uuid.uuidString
+                    entry["quantity"] = String(sample.quantity.doubleValue(for: HKUnit.count()))
+                    
+                    stepsEntries.append(entry)
+                }
+                
+                
+            }
+            completion(stepsEntries)
+        }
+        healthStore.execute(query)
+        
+    }
+    
+
+    // ChatGPT to get accept an array of data types (HKQuantityTypeIdentifier) and place all into a dictonary to send back
+    func fetchHealthData(for quantityTypeIdentifiers: [HKQuantityTypeIdentifier], completion: @escaping ([[String: String]]) -> Void) {
+        var allHealthDataEntries = [[String: String]]()
+        let dispatchGroup = DispatchGroup()
+
+        for quantityTypeIdentifier in quantityTypeIdentifiers {
+            dispatchGroup.enter()
+            let quantityType = HKQuantityType.quantityType(forIdentifier: quantityTypeIdentifier)!
+
+            let query = HKSampleQuery(sampleType: quantityType, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
+                // Check for error and handle appropriately
+                guard error == nil else {
+                    print("Error fetching samples: \(error!.localizedDescription)")
+                    dispatchGroup.leave()
+                    return
+                }
+
+                // Process each sample
+                var healthDataEntries: [[String: String]] = []
+                samples?.forEach { sample in
+                    if let sample = sample as? HKQuantitySample {
+                        var entry: [String: String] = [:]
+                        
+                        entry["source"] = sample.sourceRevision.source.name
+                        entry["sourceVersion"] = sample.sourceRevision.version
+                        entry["startDate"] = self.formatDateToString(sample.startDate)
+                        entry["endDate"] = self.formatDateToString(sample.endDate)
+                        entry["device"] = sample.device?.name ?? "Unknown Device"
+                        entry["quantity"] = String(sample.quantity.doubleValue(for: HKUnit.count()))
+                        entry["metadata"] = sample.metadata?.description ?? "No Metadata"
+
+                        healthDataEntries.append(entry)
+                    }
+                }
+                
+                allHealthDataEntries.append(contentsOf: healthDataEntries)
+                dispatchGroup.leave()
+            }
+
+            healthStore.execute(query)
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            completion(allHealthDataEntries)
+        }
+    }
+    
+    
+    // ChatGPT to get steps data only
     func fetchHealthData(startDateString: String, endDateString: String, quantityTypeIdentifier: HKQuantityTypeIdentifier, completion: @escaping ([[String: String]]) -> Void) {
         guard let startDate = convertStringToDate(dateString: startDateString),
               let endDate = convertStringToDate(dateString: endDateString),
@@ -71,6 +190,9 @@ class HealthDataFetcher {
 
         healthStore.execute(query)
     }
+    
+    
+    
     
     // Does not work because of asynchronicity of health data
     func fetchHealthData(startDateString: String, endDateString: String, quantityTypeIdentifier: HKQuantityTypeIdentifier) -> [[String: String]] {

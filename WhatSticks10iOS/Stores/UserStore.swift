@@ -140,8 +140,8 @@ class UserStore {
                 completion(.failure(UserStoreError.failedToLogin))
             }
             
-            guard let unwrapped_response = response  as? HTTPURLResponse else { return}
-
+//            guard let unwrapped_response = response  as? HTTPURLResponse else { return}
+            
         }
         task.resume()
     }
