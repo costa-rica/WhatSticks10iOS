@@ -100,6 +100,9 @@ class LoginVC: UIViewController {
         requestStore.urlStore = self.urlStore
         healthDataStore.requestStore = self.requestStore
         
+        // Instantiate Oura and Apple health data
+        healthDataStore.ouraData = HealthDataStruct()
+        healthDataStore.appleHealthData = HealthDataStruct()
         
         setup_vwLogin()
         setup_lblTitle()
@@ -283,19 +286,21 @@ class LoginVC: UIViewController {
                     self.userStore.user.token = user_obj.token
                     self.userStore.user.email = self.txtEmail.text
                     self.userStore.user.password = self.txtPassword.text
-                    //                    self.userStore.user.user_rincons = user_obj.user_rincons
                     self.userStore.user.username = user_obj.username
-//                    self.lblLoginStatusMessage.text = ""
                     self.token = user_obj.token!
+                    if let unwrap_oura_token = user_obj.oura_token{
+                        self.userStore.user.oura_token = user_obj.oura_token
+                        self.userStore.user.oura_token_verified = true
+                    }
                     self.requestStore.token = user_obj.token!
-//                    print("self.token: \(self.token)")
-                    
+                    self.healthDataStore.ouraData?.name = user_obj.ouraHealthStruct?.name
+                    self.healthDataStore.ouraData?.recordCount = user_obj.ouraHealthStruct?.recordCount
+                    self.healthDataStore.appleHealthData?.name = user_obj.appleHealthStruct?.name
+                    self.healthDataStore.appleHealthData?.recordCount = user_obj.appleHealthStruct?.recordCount
                     
                 case let .failure(error):
                     print("Login error: \(error)")
                     OperationQueue.main.addOperation {
-//                        self.lblLoginStatusMessage = UILabel()
-                        
                         if error as! UserStoreError == UserStoreError.failedToRecieveServerResponse{
                             self.alertFailedLoginMessage = "Server down ... probably :/"
                         } else {
@@ -446,17 +451,19 @@ class LoginVC: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "goToRegisterVC"){
-            let RegisterVC = segue.destination as! RegisterVC
-            RegisterVC.userStore = self.userStore
-            RegisterVC.urlStore = self.urlStore
+            let registerVC = segue.destination as! RegisterVC
+            registerVC.userStore = self.userStore
+            registerVC.urlStore = self.urlStore
             print("prepare(for goToRegisterVC --> accessed! ")
         }
         else if (segue.identifier == "goToDashboardVC"){
-            let DashboardVC = segue.destination as! DashboardVC
-            DashboardVC.userStore = self.userStore
-            DashboardVC.urlStore = self.urlStore
-            DashboardVC.healthStore = self.healthStore
-            DashboardVC.healthDataStore = self.healthDataStore
+            let dashboardVC = segue.destination as! DashboardVC
+            dashboardVC.userStore = self.userStore
+            dashboardVC.urlStore = self.urlStore
+            dashboardVC.healthStore = self.healthStore
+            dashboardVC.healthDataStore = self.healthDataStore
+            print("healthDataStore structs:")
+            print(healthDataStore.ouraData?.name)
         }
     }
     

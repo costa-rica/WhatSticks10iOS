@@ -31,6 +31,7 @@ class DashboardVC: UIViewController{
     
     var btnToGetStepsFromAppleHealth = UIButton()
     var btnToGetStepsLast30Days = UIButton()
+    var btnGoToManageDataVC = UIButton()
     // Array of dictionaries to store aggregated steps data
     var stepsDataByDate = [[String: Int]]()
     let healthDataFetcher = HealthDataFetcher()
@@ -41,24 +42,22 @@ class DashboardVC: UIViewController{
                     print(responseDict)
                 }
             }
-            
         }
     }
     
-
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.hidesBackButton = true
-        setup_vwLogin()
-        setup_btnToGetStepsFromAppleHealth()
-        setup_btnToGetStepsLast30Days()
-        
-
-
+        setup_BasicScreenTemplate()
+//        setup_btnToGetStepsFromAppleHealth()
+//        setup_btnToGetStepsLast30Days()
+        setup_btnGoToManageDataVC()
+        print("- in DAshboardVC viewDidLoad -")
+        print("healthDataStore structs:")
+        print(healthDataStore.ouraData?.name)
     }
-    func setup_vwLogin(){
+    func setup_BasicScreenTemplate(){
         
         view.addSubview(vwHeaderSpace)
         vwHeaderSpace.accessibilityIdentifier = "vwHeaderSpace"
@@ -77,7 +76,7 @@ class DashboardVC: UIViewController{
         vwHeaderLogo.addSubview(imgVwIcon)
         imgVwIcon.accessibilityIdentifier = "imgVwIcon"
         imgVwIcon.topAnchor.constraint(equalTo: vwHeaderLogo.topAnchor).isActive=true
-        imgVwIcon.leadingAnchor.constraint(equalTo: vwHeaderLogo.leadingAnchor, constant: widthFromPct(percent: 5) ).isActive = true
+        imgVwIcon.trailingAnchor.constraint(equalTo: vwHeaderLogo.trailingAnchor, constant: widthFromPct(percent: -5) ).isActive = true
         view.addSubview(vwHeaderLogo)
         vwHeaderLogo.backgroundColor = UIColor(named: "gray02")
         vwHeaderLogo.translatesAutoresizingMaskIntoConstraints = false
@@ -104,85 +103,117 @@ class DashboardVC: UIViewController{
         
     }
     
-//    func setup_lblTitle(){
-//        lblScreenNameTitle.text = "Dashboard"
-//        lblScreenNameTitle.font = UIFont(name: "ArialRoundedMTBold", size: 40)
-//        lblScreenNameTitle.translatesAutoresizingMaskIntoConstraints = false
-//        lblScreenNameTitle.accessibilityIdentifier="lblScreenNameTitle"
-//        vwHeaderLogo.addSubview(lblScreenNameTitle)
-//        lblScreenNameTitle.topAnchor.constraint(equalTo: imgVwIcon.bottomAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
-//        lblScreenNameTitle.leadingAnchor.constraint(equalTo: vwHeaderLogo.leadingAnchor, constant: widthFromPct(percent: 2.5)).isActive=true
-//    }
-    
-//    func setup_vwFooter(){
-//        
-//    }
-    
+    func setup_btnGoToManageDataVC(){
+        btnGoToManageDataVC.setTitle(" Manage Data ", for: .normal)
+        btnGoToManageDataVC.titleLabel?.font = UIFont(name: "ArialRoundedMTBold", size: 12)
+        btnGoToManageDataVC.backgroundColor = .systemOrange
+        btnGoToManageDataVC.layer.cornerRadius = 10
+        btnGoToManageDataVC.translatesAutoresizingMaskIntoConstraints=false
+        vwFooter.addSubview(btnGoToManageDataVC)
+        btnGoToManageDataVC.sizeToFit()
 
-    func setup_btnToGetStepsFromAppleHealth(){
-        btnToGetStepsFromAppleHealth.setTitle("Get Apple Health Data", for: .normal)
-        btnToGetStepsFromAppleHealth.titleLabel?.font = UIFont(name: "ArialRoundedMTBold", size: 12)
-        btnToGetStepsFromAppleHealth.backgroundColor = .systemBlue
-        btnToGetStepsFromAppleHealth.layer.cornerRadius = 10
-        btnToGetStepsFromAppleHealth.layer.borderColor = UIColor.systemBlue.cgColor
-        btnToGetStepsFromAppleHealth.layer.borderWidth = 3
-        btnToGetStepsFromAppleHealth.translatesAutoresizingMaskIntoConstraints=false
-        vwFooter.addSubview(btnToGetStepsFromAppleHealth)
-        btnToGetStepsFromAppleHealth.sizeToFit()
-//        btnToGetStepsFromAppleHealth.heightAnchor.constraint(equalToConstant: vwFooter.frame.size.height - 30).isActive=true
-        btnToGetStepsFromAppleHealth.topAnchor.constraint(equalTo: vwFooter.bottomAnchor,constant: heightFromPct(percent: -10)).isActive=true
-//        btnToGetStepsFromAppleHealth.leadingAnchor.constraint(equalTo: vwFooter.leadingAnchor,constant: widthFromPct(percent: 10)).isActive=true
-        btnToGetStepsFromAppleHealth.trailingAnchor.constraint(equalTo: vwFooter.trailingAnchor,constant: widthFromPct(percent: -5)).isActive=true
-        btnToGetStepsFromAppleHealth.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
-        btnToGetStepsFromAppleHealth.addTarget(self, action: #selector(touchUpInside_fetchSteps(_:)), for: .touchUpInside)
+        btnGoToManageDataVC.topAnchor.constraint(equalTo: vwFooter.bottomAnchor,constant: heightFromPct(percent: -10)).isActive=true
 
+        btnGoToManageDataVC.trailingAnchor.constraint(equalTo: vwFooter.trailingAnchor,constant: widthFromPct(percent: -5)).isActive=true
+        btnGoToManageDataVC.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
+        btnGoToManageDataVC.addTarget(self, action: #selector(touchUpInside_goToManageDataVC(_:)), for: .touchUpInside)
     }
-    
     @objc func touchDown(_ sender: UIButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         }, completion: nil)
-
     }
-
-    @objc func touchUpInside_fetchSteps(_ sender: UIButton) {
+    
+    @objc func touchUpInside_goToManageDataVC(_ sender: UIButton) {
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
             sender.transform = .identity
         }, completion: nil)
-
-        healthDataFetcher.fetchSteps(quantityTypeIdentifier: .stepCount) { stepsDict in
-            self.appleHealthDataDict = stepsDict
+        print("- in touchUpInside_goToManageDataVC")
+        performSegue(withIdentifier: "goToManageDataVC", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "goToManageDataVC"){
+            let manageDataVC = segue.destination as! ManageDataVC
+            manageDataVC.userStore = self.userStore
+            manageDataVC.urlStore = self.urlStore
+            manageDataVC.healthDataFetcher = self.healthDataFetcher
+            manageDataVC.healthDataStore = self.healthDataStore
+            print("prepare(for goToManageDataVC --> accessed! ")
+            print("healthDataStore structs:")
+            print(self.healthDataStore.ouraData?.name)
+            print(self.healthDataStore.ouraData?.recordCount)
+            print(self.healthDataStore.appleHealthData?.name)
+            print(self.healthDataStore.appleHealthData?.recordCount)
         }
-    }
-    
-    
-    func setup_btnToGetStepsLast30Days(){
-        btnToGetStepsLast30Days.setTitle("Get 30 Days", for: .normal)
-        btnToGetStepsLast30Days.titleLabel?.font = UIFont(name: "ArialRoundedMTBold", size: 12)
-        btnToGetStepsLast30Days.backgroundColor = .systemOrange
-        btnToGetStepsLast30Days.layer.cornerRadius = 10
-        btnToGetStepsLast30Days.translatesAutoresizingMaskIntoConstraints=false
-        vwFooter.addSubview(btnToGetStepsLast30Days)
-        btnToGetStepsLast30Days.sizeToFit()
-
-        btnToGetStepsLast30Days.topAnchor.constraint(equalTo: vwFooter.bottomAnchor,constant: heightFromPct(percent: -10)).isActive=true
-
-        btnToGetStepsLast30Days.trailingAnchor.constraint(equalTo: btnToGetStepsFromAppleHealth.leadingAnchor,constant: widthFromPct(percent: 5)).isActive=true
-        btnToGetStepsLast30Days.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
-        btnToGetStepsLast30Days.addTarget(self, action: #selector(touchUpInside_fetchSteps30Days(_:)), for: .touchUpInside)
 
     }
     
-    @objc func touchUpInside_fetchSteps30Days(_ sender: UIButton) {
-        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
-            sender.transform = .identity
-        }, completion: nil)
+//    private func formattedDate(_ date: Date) -> String {
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "yyyy-MM-dd"
+//        return dateFormatter.string(from: date)
+//    }
 
-        healthDataFetcher.fetchSteps(quantityTypeIdentifier: .stepCount, startDateString: "2023-12-02") { stepsDict in
-            self.appleHealthDataDict = stepsDict
-        }
-    }
+//    func setup_btnToGetStepsFromAppleHealth(){
+//        btnToGetStepsFromAppleHealth.setTitle(" Get Apple Health Data ", for: .normal)
+//        btnToGetStepsFromAppleHealth.titleLabel?.font = UIFont(name: "ArialRoundedMTBold", size: 12)
+//        btnToGetStepsFromAppleHealth.backgroundColor = .systemBlue
+//        btnToGetStepsFromAppleHealth.layer.cornerRadius = 10
+//        btnToGetStepsFromAppleHealth.layer.borderColor = UIColor.systemBlue.cgColor
+//        btnToGetStepsFromAppleHealth.layer.borderWidth = 3
+//        btnToGetStepsFromAppleHealth.translatesAutoresizingMaskIntoConstraints=false
+//        vwFooter.addSubview(btnToGetStepsFromAppleHealth)
+//        btnToGetStepsFromAppleHealth.sizeToFit()
+////        btnToGetStepsFromAppleHealth.heightAnchor.constraint(equalToConstant: vwFooter.frame.size.height - 30).isActive=true
+//        btnToGetStepsFromAppleHealth.topAnchor.constraint(equalTo: vwFooter.bottomAnchor,constant: heightFromPct(percent: -10)).isActive=true
+////        btnToGetStepsFromAppleHealth.leadingAnchor.constraint(equalTo: vwFooter.leadingAnchor,constant: widthFromPct(percent: 10)).isActive=true
+//        btnToGetStepsFromAppleHealth.trailingAnchor.constraint(equalTo: vwFooter.trailingAnchor,constant: widthFromPct(percent: -5)).isActive=true
+//        btnToGetStepsFromAppleHealth.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
+//        btnToGetStepsFromAppleHealth.addTarget(self, action: #selector(touchUpInside_fetchSteps(_:)), for: .touchUpInside)
+//
+//    }
     
+
+
+//    @objc func touchUpInside_fetchSteps(_ sender: UIButton) {
+//        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+//            sender.transform = .identity
+//        }, completion: nil)
+//
+//        healthDataFetcher.fetchSteps(quantityTypeIdentifier: .stepCount) { stepsDict in
+//            self.appleHealthDataDict = stepsDict
+//        }
+//    }
+    
+    
+//    func setup_btnToGetStepsLast30Days(){
+//        btnToGetStepsLast30Days.setTitle(" Get 30 Days ", for: .normal)
+//        btnToGetStepsLast30Days.titleLabel?.font = UIFont(name: "ArialRoundedMTBold", size: 12)
+//        btnToGetStepsLast30Days.backgroundColor = .systemOrange
+//        btnToGetStepsLast30Days.layer.cornerRadius = 10
+//        btnToGetStepsLast30Days.translatesAutoresizingMaskIntoConstraints=false
+//        vwFooter.addSubview(btnToGetStepsLast30Days)
+//        btnToGetStepsLast30Days.sizeToFit()
+//
+//        btnToGetStepsLast30Days.topAnchor.constraint(equalTo: vwFooter.bottomAnchor,constant: heightFromPct(percent: -10)).isActive=true
+//
+//        btnToGetStepsLast30Days.trailingAnchor.constraint(equalTo: btnToGetStepsFromAppleHealth.leadingAnchor,constant: widthFromPct(percent: -5)).isActive=true
+//        btnToGetStepsLast30Days.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
+//        btnToGetStepsLast30Days.addTarget(self, action: #selector(touchUpInside_fetchSteps30Days(_:)), for: .touchUpInside)
+//    }
+    
+//    @objc func touchUpInside_fetchSteps30Days(_ sender: UIButton) {
+//        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+//            sender.transform = .identity
+//        }, completion: nil)
+//        print("- in touchUpInside_fetchSteps30Days")
+//        healthDataFetcher.fetchSteps(quantityTypeIdentifier: .stepCount, endDateString: "2023-12-02") { stepsDict in
+//            self.appleHealthDataDict = stepsDict
+//        }
+//    }
+    
+
     
 //    func fetchStepsCount() {
 //        if let stepCountType = HKObjectType.quantityType(forIdentifier: .stepCount) {
@@ -210,10 +241,6 @@ class DashboardVC: UIViewController{
 //        }
 //    }
     
-    private func formattedDate(_ date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter.string(from: date)
-    }
+
     
 }

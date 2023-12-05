@@ -14,6 +14,21 @@ class User:Codable {
     var username: String?
     var token: String?
     var admin: Bool?
+    var oura_token: String?
+    var oura_token_verified: Bool?
     var time_stamp_utc: String?
+    var dataDict:[String:String]?
+    var ouraHealthStruct:HealthDataStruct?
+    var appleHealthStruct:HealthDataStruct?
 }
 
+struct HealthDataStruct:Codable {
+    var name:String?
+    var recordCount:String?
+    var dataDict:[String:String]?
+}
+
+//struct AppleHealthStruct{
+//    var name:String?
+//    var recordCount:String?
+//}

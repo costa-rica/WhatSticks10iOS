@@ -40,10 +40,48 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="73N-L8-u1a"/>
+                    <connections>
+                        <segue destination="t8H-sl-mY1" kind="show" identifier="goToManageDataVC" id="NC3-p8-sMs"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2iu-Br-ywk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1947" y="23"/>
+        </scene>
+        <!--Manage DataVC-->
+        <scene sceneID="egs-We-AY6">
+            <objects>
+                <viewController id="t8H-sl-mY1" customClass="ManageDataVC" customModule="WhatSticks10iOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="OZO-8s-fKU">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Ihx-xv-4KV"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="eg7-Db-nnB"/>
+                    <connections>
+                        <segue destination="f7j-rl-yVI" kind="show" identifier="goToManageDataSourceDetailsVC" id="1S5-za-Vdc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lDC-Cf-5F5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2850" y="23"/>
+        </scene>
+        <!--Manage Data Source DetailsVC-->
+        <scene sceneID="XRj-0e-Bry">
+            <objects>
+                <viewController id="f7j-rl-yVI" customClass="ManageDataSourceDetailsVC" customModule="WhatSticks10iOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="B7D-0y-yyt">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="ENF-wy-jf2"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="7FZ-3h-hoA"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0yp-wd-ug5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3723" y="23"/>
         </scene>
         <!--Forgot PasswordVC-->
         <scene sceneID="quu-CZ-dDh">

@@ -32,15 +32,6 @@ class RegisterVC: UIViewController {
     let txtPassword = UITextField()
     let btnShowPassword = UIButton()
     
-
-//    var lblLoginStatusMessage = UILabel() {
-//        didSet{
-//            if lblLoginStatusMessage.text != ""{
-//                setup_vwFailedToLogin()
-//            }
-//        }
-//    }
-//    
     //Register
     var btnRegister=UIButton()
     var lblWarning: UILabel!
@@ -48,21 +39,18 @@ class RegisterVC: UIViewController {
     var registerSuccessMessage = ""{
         didSet{
             if registerSuccessMessage == "Succesfully Registered!"{
-                
+                alertConfirmRegister()
             }
         }
     }
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-//
         setup_vwLogin()
         setup_lblTitle()
         setup_stckVwRegister()
         setup_btnRegister()
-        
     }
     
     func setup_vwLogin(){
@@ -220,8 +208,6 @@ class RegisterVC: UIViewController {
                 print("\(userRegDict["username"]!)")
                 self.registerSuccessMessage = "Succesfully Registered!"
                 
-
-
             }
             else {
                 print("--- Fail of some sort ---")

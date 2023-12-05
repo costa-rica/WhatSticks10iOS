@@ -13,6 +13,8 @@
 		018B76262B1877B000EE711D /* HealthDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B76252B1877B000EE711D /* HealthDataStore.swift */; };
 		018B76282B1915FA00EE711D /* ForgotPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B76272B1915F900EE711D /* ForgotPasswordVC.swift */; };
 		018B762A2B1B635000EE711D /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 018B76292B1B635000EE711D /* Config.plist */; };
+		018B762C2B1BD36A00EE711D /* ManageDataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B762B2B1BD36A00EE711D /* ManageDataVC.swift */; };
+		018B762E2B1CBC5F00EE711D /* ManageDataSourceDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018B762D2B1CBC5F00EE711D /* ManageDataSourceDetailsVC.swift */; };
 		01EB5CB52B17257F00CE9F2D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EB5CB42B17257F00CE9F2D /* AppDelegate.swift */; };
 		01EB5CB72B17257F00CE9F2D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EB5CB62B17257F00CE9F2D /* SceneDelegate.swift */; };
 		01EB5CB92B17257F00CE9F2D /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EB5CB82B17257F00CE9F2D /* LoginVC.swift */; };
@@ -53,6 +55,8 @@
 		018B76252B1877B000EE711D /* HealthDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataStore.swift; sourceTree = "<group>"; };
 		018B76272B1915F900EE711D /* ForgotPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordVC.swift; sourceTree = "<group>"; };
 		018B76292B1B635000EE711D /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Config.plist; sourceTree = "<group>"; };
+		018B762B2B1BD36A00EE711D /* ManageDataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageDataVC.swift; sourceTree = "<group>"; };
+		018B762D2B1CBC5F00EE711D /* ManageDataSourceDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageDataSourceDetailsVC.swift; sourceTree = "<group>"; };
 		01EB5CB12B17257F00CE9F2D /* WhatSticks10iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhatSticks10iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01EB5CB42B17257F00CE9F2D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01EB5CB62B17257F00CE9F2D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -169,6 +173,8 @@
 				018B761E2B179D7B00EE711D /* RegisterVC.swift */,
 				018B76202B17A3F300EE711D /* DashboardVC.swift */,
 				018B76272B1915F900EE711D /* ForgotPasswordVC.swift */,
+				018B762B2B1BD36A00EE711D /* ManageDataVC.swift */,
+				018B762D2B1CBC5F00EE711D /* ManageDataSourceDetailsVC.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -326,9 +332,11 @@
 				01EB5CB92B17257F00CE9F2D /* LoginVC.swift in Sources */,
 				018B761F2B179D7B00EE711D /* RegisterVC.swift in Sources */,
 				018B76282B1915FA00EE711D /* ForgotPasswordVC.swift in Sources */,
+				018B762E2B1CBC5F00EE711D /* ManageDataSourceDetailsVC.swift in Sources */,
 				01EB5CEB2B173A4800CE9F2D /* UserStore.swift in Sources */,
 				018B76262B1877B000EE711D /* HealthDataStore.swift in Sources */,
 				01EB5CB52B17257F00CE9F2D /* AppDelegate.swift in Sources */,
+				018B762C2B1BD36A00EE711D /* ManageDataVC.swift in Sources */,
 				018B76212B17A3F300EE711D /* DashboardVC.swift in Sources */,
 				018B76242B18524200EE711D /* MiscUtils.swift in Sources */,
 				01EB5CB72B17257F00CE9F2D /* SceneDelegate.swift in Sources */,

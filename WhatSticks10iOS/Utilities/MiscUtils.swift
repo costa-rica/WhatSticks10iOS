@@ -8,12 +8,30 @@
 import Foundation
 import HealthKit
 
+
+import Foundation
+
+class ConfigManager {
+    static let shared = ConfigManager()
+    private var config: [String: Any]?
+
+    private init() {
+        if let path = Bundle.main.path(forResource: "Config", ofType: "plist"),
+           let dict = NSDictionary(contentsOfFile: path) as? [String: Any] {
+            self.config = dict
+        }
+    }
+
+    func getValue(forKey key: String) -> String? {
+        return config?[key] as? String
+    }
+}
+
 extension Date {
     static var startOfDay: Date {
         Calendar.current.startOfDay(for:Date())
     }
 }
-
 
 func authorizeHealthKit(healthStore: HKHealthStore) {
     // Specify the data types you want to read
@@ -36,8 +54,17 @@ func authorizeHealthKit(healthStore: HKHealthStore) {
     }
 }
 
+func formatDateToString(_ date: Date) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    return dateFormatter.string(from: date)
+}
 
-//import HealthKit
+func formatDateTimeToString(_ date: Date) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    return dateFormatter.string(from: date)
+}
 
 class HealthDataFetcher {
     let healthStore = HKHealthStore()
@@ -47,11 +74,11 @@ class HealthDataFetcher {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.date(from: dateString)
     }
-    private func formatDateToString(_ date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return dateFormatter.string(from: date)
-    }
+//    private func formatDateToString(_ date: Date) -> String {
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+//        return dateFormatter.string(from: date)
+//    }
     func getDate30DaysAgo(from dateString: String) -> String? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -81,8 +108,8 @@ class HealthDataFetcher {
                 if let sample = sample as? HKQuantitySample {
                     var entry: [String: String] = [:]
                     entry["sampleType"] = sample.sampleType.identifier
-                    entry["startDate"] = self.formatDateToString(sample.startDate)
-                    entry["endDate"] = self.formatDateToString(sample.endDate)
+                    entry["startDate"] = formatDateTimeToString(sample.startDate)
+                    entry["endDate"] = formatDateTimeToString(sample.endDate)
                     entry["metadata"] = sample.metadata?.description ?? "No Metadata"
                     entry["sourceName"] = sample.sourceRevision.source.name
                     entry["sourceVersion"] = sample.sourceRevision.version
@@ -98,11 +125,13 @@ class HealthDataFetcher {
         healthStore.execute(query)
     }
     
-    func fetchSteps(quantityTypeIdentifier: HKQuantityTypeIdentifier,startDateString: String,  completion: @escaping ([[String: String]]) -> Void) {
+
+    func fetchSteps(quantityTypeIdentifier: HKQuantityTypeIdentifier,endDateString: String,  completion: @escaping ([[String: String]]) -> Void) {
+        print("- acccessed fetchSteps ")
         var stepsEntries = [[String: String]]()
 
-        guard let startDate = convertStringToDate(dateString: startDateString),
-              let endDate = convertStringToDate(dateString: getDate30DaysAgo(from:startDateString) ?? "2023-11-01"),
+        guard let startDate = convertStringToDate(dateString: getDate30DaysAgo(from:endDateString) ?? "2023-11-01"),
+              let endDate = convertStringToDate(dateString: endDateString),
               let quantityType = HKQuantityType.quantityType(forIdentifier: quantityTypeIdentifier) else {
             print("Invalid date or quantity type")
             completion([])
@@ -110,7 +139,7 @@ class HealthDataFetcher {
         }
 
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-        
+ 
         let query = HKSampleQuery(sampleType: quantityType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
             guard error == nil else {print("error making query"); return}
 
@@ -118,8 +147,8 @@ class HealthDataFetcher {
                 if let sample = sample as? HKQuantitySample {
                     var entry: [String: String] = [:]
                     entry["sampleType"] = sample.sampleType.identifier
-                    entry["startDate"] = self.formatDateToString(sample.startDate)
-                    entry["endDate"] = self.formatDateToString(sample.endDate)
+                    entry["startDate"] = formatDateTimeToString(sample.startDate)
+                    entry["endDate"] = formatDateTimeToString(sample.endDate)
                     entry["metadata"] = sample.metadata?.description ?? "No Metadata"
                     entry["sourceName"] = sample.sourceRevision.source.name
                     entry["sourceVersion"] = sample.sourceRevision.version
@@ -131,6 +160,7 @@ class HealthDataFetcher {
                 }
             }
             completion(stepsEntries)
+            print("stepsEntries count: \(stepsEntries.count)")
         }
         healthStore.execute(query)
     }
@@ -160,8 +190,8 @@ class HealthDataFetcher {
                         
                         entry["source"] = sample.sourceRevision.source.name
                         entry["sourceVersion"] = sample.sourceRevision.version
-                        entry["startDate"] = self.formatDateToString(sample.startDate)
-                        entry["endDate"] = self.formatDateToString(sample.endDate)
+                        entry["startDate"] = formatDateTimeToString(sample.startDate)
+                        entry["endDate"] = formatDateTimeToString(sample.endDate)
                         entry["device"] = sample.device?.name ?? "Unknown Device"
                         entry["quantity"] = String(sample.quantity.doubleValue(for: HKUnit.count()))
                         entry["metadata"] = sample.metadata?.description ?? "No Metadata"
@@ -207,8 +237,8 @@ class HealthDataFetcher {
                 var entry: [String: String] = [:]
                 entry["quantity"] = String(sample.quantity.doubleValue(for: HKUnit.count()))
                 entry["source"] = sample.sourceRevision.source.name
-                entry["startDate"] = self.formatDateToString(sample.startDate)
-                entry["endDate"] = self.formatDateToString(sample.endDate)
+                entry["startDate"] = formatDateTimeToString(sample.startDate)
+                entry["endDate"] = formatDateTimeToString(sample.endDate)
                 entry["device"] = sample.device?.name ?? "Unknown Device"
                 entry["metadata"] = sample.metadata?.description ?? "No Metadata"
 

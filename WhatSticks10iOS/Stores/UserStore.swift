@@ -65,7 +65,8 @@ class UserStore {
         
         bodyDict["new_email"] = email
         bodyDict["new_password"] = password
-        bodyDict["WS_API_PASSWORD"] = "sudo_"
+        bodyDict["WS_API_PASSWORD"] = ConfigManager.shared.getValue(forKey: "WS_API_PASSWORD")
+//        print("password: \(ConfigManager.shared.getValue(forKey: "WS_API_PASSWORD"))")
         do {
             let jsonEncoder = JSONEncoder()
             jsonData = try jsonEncoder.encode(bodyDict)
